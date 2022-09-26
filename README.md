@@ -24,8 +24,11 @@ This repo includes my notes on Django
 │   └── django-starter.md
 │
 ├── Django Rest Framework
+│   ├── class-based-views.md
 │   ├── drf-starter.md
 │   ├── function-based-views.md
+│   ├── images
+│   │   └── drf_views_overview.png
 │   └── serializers.md
 │
 └── README.md

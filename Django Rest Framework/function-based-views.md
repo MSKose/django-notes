@@ -133,7 +133,7 @@ def student_detail(request, pk): # because it's individual objects we're after, 
 # urls.py
 urlpatterns = [
     ...
-		path('student_detail/<int:pk>/', student_detail, name='student_detail'),
+    path('student_detail/<int:pk>/', student_detail, name='student_detail'),
 ]
 ```
 
@@ -155,7 +155,7 @@ def student_update(request, pk):
 # urls.py
 urlpatterns = [
     ...
-		path('student_update/<int:pk>/', student_update, name='student_update'),
+    path('student_update/<int:pk>/', student_update, name='student_update'),
 ]
 ```
 
@@ -177,7 +177,7 @@ def student_update_partial(request, pk):
 # urls.py
 urlpatterns = [
     ...
-		path('student_update_partial/<int:pk>/', student_update_partial, name='student_update_partial'),
+    path('student_update_partial/<int:pk>/', student_update_partial, name='student_update_partial'),
 ]
 ```
 
@@ -196,7 +196,7 @@ def student_delete(request, pk):
 # urls.py
 urlpatterns = [
     ...
-		path('student_delete/<int:pk>/', student_delete, name='student_delete'),
+    path('student_delete/<int:pk>/', student_delete, name='student_delete'),
 ]
 ```
 
@@ -238,6 +238,6 @@ def student_api_get_update_delete(request, pk):
 # urls.py
 urlpatterns = [
     ...
-		path('student/<int:pk>/', student_api_get_update_delete, name="detail"),
+    path('student/<int:pk>/', student_api_get_update_delete, name="detail"),
 ]
 ```
