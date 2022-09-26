@@ -1,4 +1,4 @@
-# DRF
+# drf-starter
 
 - First things first, you'll have to install django rest framework and add it to the settings.py:
 

@@ -21,19 +21,23 @@ This repo includes my notes on Django
 .──── django-notes (repo)
 │
 ├── Django Fundamentals
+│   └── django-starter.md
+│
 ├── Django Rest Framework
-│   ├── Serializers.md
-│   └── drf-starter.md
+│   ├── drf-starter.md
+│   ├── function-based-views.md
+│   └── serializers.md
+│
 └── README.md
 
 ```
 
 ## How To Use 
 
-To clone and run this application, you'll need [Git](https://git-scm.com)
+To clone and run this repo, you'll need [Git](https://git-scm.com)
 
 ```bash
-# Clone this repository
+# Clone this repository:
 $ git clone https://github.com/MSKose/django-notes
 ```
 
