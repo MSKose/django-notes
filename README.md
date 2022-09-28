@@ -28,7 +28,9 @@ This repo includes my notes on Django
 │   ├── drf-starter.md
 │   ├── function-based-views.md
 │   ├── images
-│   │   └── drf_views_overview.png
+│   │   ├── drf_views_overview.png
+│   │   └── pagination-img.png
+│   ├── pagination-filtering-search-ordering.md
 │   └── serializers.md
 │
 └── README.md
