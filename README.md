@@ -25,13 +25,18 @@ This repo includes my notes on Django
 │
 ├── Django Rest Framework
 │   ├── class-based-views.md
+│   ├── drf-auth-permissions.md
 │   ├── drf-starter.md
 │   ├── function-based-views.md
-│   ├── images
-│   │   ├── drf_views_overview.png
-│   │   └── pagination-img.png
 │   ├── pagination-filtering-search-ordering.md
-│   └── serializers.md
+│   ├── serializers.md
+│   └── images
+│       ├── adding-token-postman-img.png
+│       ├── base64-decoding-img.png
+│       ├── basicauth-img.png
+│       ├── drf_views_overview.png
+│       ├── pagination-img.png
+│       └── postman-basicAuth.png
 │
 └── README.md
 

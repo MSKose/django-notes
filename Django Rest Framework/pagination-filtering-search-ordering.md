@@ -79,7 +79,7 @@ class StudentCRUD(ModelViewSet):
             "last_name": "Lang",
             "number": 5234
         },
-				...
+        ...
     ]
 }
 
@@ -116,7 +116,7 @@ REST_FRAMEWORK = {
             "last_name": "Hernandez",
             "number": 7920
         },
-				...
+        ...
     ]
 }
 
@@ -177,11 +177,13 @@ class MycursorPagination(CursorPagination):
 ```
 
 
+- You may have noticed that, because this is cursor based, we do not see other pages. Rather, we are presented with Previous and Next buttons only.
+
 <p align="center">
   <img src="./images/pagination-img.png"/>
 </p>
 
-- You may have noticed that, because this is cursor based, we do not see other pages. Rather, we are presented with Previous and Next buttons only.
+
 - Now our url has gotten a random endpoint. That might be beneficial for security reasons. Also, unlike offset-based pagination, Cursor based pagination schemes support usage with very large datasets. And, lastly, When used properly `CursorPagination` ensures that the client will never see the same item twice when paging through records, even when new items are being inserted by other clients during the pagination process.
 
 # Filtering
@@ -236,7 +238,7 @@ class StudentCRUD(ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     pagination_class = MycursorPagination
-		filterset_fields = ['first_name', 'last_name'] # therefore, you either override get_queryset method like we did above or add this line after installing django-filter and adding it to settings.py
+    filterset_fields = ['first_name', 'last_name'] # therefore, you either override get_queryset method like we did above or add this line after installing django-filter and adding it to settings.py
 
 # now this endpoint will let you filter based on first_name and last_name. Add /?last_name=Taylor to your endpoint and you'll get those with last_name Taylor
 ```
@@ -251,8 +253,8 @@ class StudentCRUD(ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     pagination_class = MycursorPagination
-		filter_backends = [DjangoFilterBackend] # this line makes our filtering set locally instead of globally
-		filterset_fields = ['first_name', 'last_name'] # as was the case in global settings, we are now able to filter based on first_name and last_name
+    filter_backends = [DjangoFilterBackend] # this line makes our filtering set locally instead of globally
+    filterset_fields = ['first_name', 'last_name'] # as was the case in global settings, we are now able to filter based on first_name and last_name
 ```
 
 # Search
@@ -268,7 +270,7 @@ class StudentCRUD(ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     pagination_class = MycursorPagination
-		filter_backends = [SearchFilter] # this line makes our filtering set locally instead of globally. 
+    filter_backends = [SearchFilter] # this line makes our filtering set locally instead of globally. 
     search_fields = ['first_name', 'last_name'] # this one searches based on the fields we pass to the list
 
 # notice how we used 'filter_backends' for filtering and searching. Therefore, we could have passed both the DjangoFilterBackend and SearchFilter to the list and utilize both functionality
@@ -298,8 +300,8 @@ class StudentCRUD(ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     pagination_class = MycursorPagination
-		filter_backends = [OrderingFilter]
-		ordering_fields = ['first_name', 'last_name']
+    filter_backends = [OrderingFilter]
+    ordering_fields = ['first_name', 'last_name']
 
 # now we're able to order in four options; descending first or last name or ascending first or last name. The endpoints would look like this: ?ordering=-first_name
 ```
@@ -314,8 +316,8 @@ class StudentCRUD(ModelViewSet):
     queryset = Student.objects.all().order_by('-id')
     serializer_class = StudentSerializer
     pagination_class = SmallPageNumberPagination
-		filter_backends = [OrderingFilter]
-		ordering_fields = ['first_name', 'last_name']
+    filter_backends = [OrderingFilter]
+    ordering_fields = ['first_name', 'last_name']
 
 # now, if not provided with a ordering preference our objects will be ordered by descending id order by default
 ```
@@ -332,7 +334,7 @@ class StudentCRUD(ModelViewSet):
     queryset = Student.objects.all().order_by('-id')
     serializer_class = StudentSerializer
     pagination_class = SmallPageNumberPagination
-		filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['first_name', 'last_name', 'number']
     search_fields = ['first_name', 'last_name']
     ordering_fields = ['first_name', 'last_name']
