@@ -36,7 +36,8 @@ This repo includes my notes on Django
 │       ├── basicauth-img.png
 │       ├── drf_views_overview.png
 │       ├── pagination-img.png
-│       └── postman-basicAuth.png
+│       ├── postman-basicAuth.png
+│       └── user-field-img.png
 │
 └── README.md
 

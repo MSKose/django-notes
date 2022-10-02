@@ -300,6 +300,282 @@ urlpatterns = [
     "last_name": "User"
 }
 
-# Therefore, we don't get the user's token being sent to us by default. We have to 
-# add some more lines into our views overwriting the create method
+# Only after we get to login page will we get the token. Hence, if we want to get token on registration
+# page too, we have to add some more lines into our views overriding the create method
 ```
+
+
+- Before moving on with overriding our views, do remember that our user still can have access to their token by logging in after having registered. But, since we want to have access to our token even immediately after registration we are overriding the views.py. So here our new views.py goes;
+
+```python
+# views.py
+from django.shortcuts import render
+from .serializers import RegistrationSerializer
+from rest_framework import generics
+from django.contrib.auth.models import User
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.authtoken.models import Token
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegistrationSerializer
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        token = Token.objects.create(user=user) # creating a token for a particular user
+        data = serializer.data # serializer.data is normally what we have returned
+        data['token'] = token.key # adding token to the returned data
+        headers = self.get_success_headers(serializer.data)
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+
+# The create function defined here is mostly copied from CreateModelMixin, the mixin used for CreateAPIView.
+# However, there has been some modifications with the create function in order to send the token too
+```
+
+- Let's test if the added create method in ou views have made a difference when we register a new user. Again, we are using Postman's Body/raw part to do a POST request but remember that this is no different than registering a user in our front-end. Anyways, after sending a POST request with the following JSON;
+
+```python
+{
+    "username": "TestUser2",
+    "password": "pass321",
+    "password2" : "pass321",
+    "email" : "test@test2.com",
+    "first_name" : "Test",
+    "last_name" : "User"
+}
+```
+
+- We now get this;
+
+```python
+{
+    "username": "TestUser2",
+    "email": "test@test2.com",
+    "first_name": "Test",
+    "last_name": "User"
+		"token": "f96ea783030406332bb2aebe946ab37cac1c4914"
+}
+
+# It has worked! Now we get access to token after register POST request
+```
+
+- Alternatively, we can add a signal watching a user to be created and if created, adding a token to the user;
+
+```python
+# models.py
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
+
+# since we created our token in our models, we no longer have to 
+# 'create' it on our views, we just have to 'get' it like;
+
+# views.py
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegistrationSerializer
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        token = Token.objects.get(user=user) # this is the only change. changed create to get
+        data = serializer.data
+        data['token'] = token.key
+				data['message'] = 'user was created successfully' # we can generate as much key-values as we want
+        headers = self.get_success_headers(serializer.data)
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+```
+
+- After generating our token with post_save signals and getting it in our create method in our views, we'll still get our token after registration (well, with the addition of a message);
+
+```python
+{
+    "username": "TestUser3",
+    "email": "test@test3.com",
+    "first_name": "Test",
+    "last_name": "User"
+		"token": "f96ea783030406wjkbfbb2aebe946ab37cac1c4914"
+		"message": "user was created successfully"
+}
+
+# see, we're still getting our token after registration
+```
+
+- Now let's add a logout view, where our token will be deleted;
+
+```python
+# views.py
+@api_view(['POST'])
+def logout_view(request):
+    if request.method == 'POST':
+        request.user.auth_token.delete()
+        data = {
+            'message': 'logout'
+        }
+        return Response(data)
+```
+
+```python
+# urls.py
+from django.urls import path
+from .views import logout_view
+
+urlpatterns = [
+		...
+    path('logout/', logout_view, name="logout"),
+]
+```
+
+### [Custom Permissions](https://www.django-rest-framework.org/api-guide/permissions/#custom-permissions)
+
+- To implement a custom permission, override `BasePermission` and implement either, or both, of the following methods: `.has_permission(self, request, view)` for view level permissions and/or `.has_object_permission(self, request, view, obj)` for object level permissions.
+- In our student_api app let's create a new file named permissions.py and add the following;
+
+```python
+# permissions.py
+from rest_framework import permissions
+
+class IsAdminorReadOnly(permissions.IsAdminUser): # we are overriding the permission IsAdminUser as IsAdminorReadOnly
+    
+    def has_permission(self, request, view): # let's first define a view level permission; hence, we're using the has_permission method
+        
+        if request.method in permissions.SAFE_METHODS: # SAFE_METHODS are request methods that does not allow alteration, hence read-only
+            return True
+        else: # else, for non-safe methods like UPDATE or DELETE, look if the user is admin
+            return bool(request.user.is_staff) # bool() in this case will return true if the user is admin and grant the user with extended permissions other than read-only
+
+# By default, IsAdminUser was letting us pass only if we were an admin, but overriding it with our custom
+# IsAdminorReadOnly we made it possible for non-admin users to have read permissions
+```
+
+- Now let's use our custom permission IsAdminorReadOnly in our views;
+
+```python
+# views.py
+from .permissions import IsAdminorReadOnly
+
+class StudentList(generics.ListCreateAPIView):
+    serializer_class = StudentSerializer
+    queryset = Student.objects.all()
+    permission_classes = [IsAdminorReadOnly]
+```
+
+- Now for a non-admin user if we try to request a listing GET method, we'll receive it with no problem. But since our user is not an admin, we wouldn't be able to successfully do a POST request. We'd get the following error;
+
+```python
+{
+		"detail": "You do not have permission to perform this action"
+}
+
+# all in all, overriding the IsAdminUser permission and creating a new custom permission class on view level
+```
+
+- Now, let's see how we'd create a custom permission class on object level;
+
+```python
+# models.py
+from django.db import models
+from django.contrib.auth.models import User
+
+class Student(models.Model):
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    number = models.IntegerField(blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True) # this is newly added. null and blank is set to True since I don't want to mess with existing users
+
+    def __str__(self):
+        return f"{self.last_name} {self.first_name}"
+
+# We added the user field to keep track of the creators of the users. If the creator of the user is a admin
+# we will act accordingly and vice versa
+# As always, run makemigrations and migrate commands afterwards
+```
+
+- For the views part we'll need to override the perform_create method(). Just as we had to override the create method to add the token, now we'll need to override the perform_create method from CreateModelMixin to set a creator for users;
+
+```python
+# views.py
+from rest_framework.permissions import IsAuthenticated
+
+class StudentList(generics.ListCreateAPIView):
+    serializer_class = StudentSerializer
+    queryset = Student.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user) # by default, the save method didn't take any arguments in CreateModelMixin but now we're sending the creator (the logged in user doing the POST) too
+```
+
+- Now if I were to create a new student object when, say, user Mustafa was logged in (that is, authorization key for Mustafa is typed in Postman when performing the POST request). I will now get a new field called user along with other fields;
+
+<!-- ![Screenshot 2022-10-02 at 21.45.31.png](./images/user-field-img.png) -->
+
+<p align="center">
+  <img src="./images/user-field-img.png" alt="drf_views_overview.png" height="300px"/>
+</p>
+
+- Since we were logged in as Mustafa when we requested POST, we got the User equal to Mustafa
+- Now let's add the permissions login we had been thinking about to add on object level. Let's create a custom IsAddedByUserorReadOnly permission class;
+
+```python
+# permissions.py
+from rest_framework import permissions
+
+class IsAddedByUserorReadOnly(permissions.BasePermission):
+    
+    def has_object_permission(self, request, view, obj): # now we're using the has_object_permission method since this is intended to be a object level permission class
+        if request.method == permissions.SAFE_METHODS:
+            return True
+        else:
+            return obj.user == request.user or request.user.is_staff
+
+# the "or request.user.is_staff" part is optional really. Since that means any admin can do a, say, PUT request
+```
+
+- Now we have to add IsAddedByUserorReadOnly to our views.py
+
+```python
+# views.py
+from .permissions import IsAddedByUserorReadOnly
+
+class StudentOperations(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = StudentSerializer
+    queryset = Student.objects.all()
+    permission_classes = [IsAddedByUserorReadOnly]
+
+# Notice that this is our StudentOperations class where we apply the PUT method for example
+```
+
+- The corresponding urls.py for StudentOperations is;
+
+```python
+from django.urls import path
+from .views import StudentOperations
+
+urlpatterns = [
+    ...
+    path('student/<int:pk>/', StudentOperations.as_view(), name="detail"),
+]
+```
+
+- Now in Postman let's try to apply a PUT request on the api/student/1/ endpoint with a user token that is not an admin. We'll get the following 403 error;
+
+```python
+{
+    "detail": "You do not have permission to perform this action."
+}
+
+# But if the user token provided was an admin user, we'd be able to request PUT without errors
+```
+
+- Before finishing off, it'll be wise to mention two other third-party Authentication methods: **[JSON Web Token Authentication](https://www.django-rest-framework.org/api-guide/authentication/#json-web-token-authentication)** (aka JWT) and **[django-rest-auth / dj-rest-auth](https://www.django-rest-framework.org/api-guide/authentication/#django-rest-auth-dj-rest-auth)**
