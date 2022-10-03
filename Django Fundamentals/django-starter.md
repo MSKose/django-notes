@@ -8,7 +8,8 @@
 python -m venv env
 
 # 2. step (activating)
-source env/bin/activate  (env/Scripts/activate for Windows)
+source env/bin/activate (for MacOs)
+env/Scripts/activate (for Windows)
 
 # extra step if you want to deactivate your environment
 deactivate
@@ -35,7 +36,7 @@ python manage.py startapp <yourappname>
 python manage.py runserver
 ```
 
-- Setting up a .env file for your secret key. See [here](https://pypi.org/project/python-decouple/#example-how-do-i-use-it-with-django) more details
+- Setting up a .env file for your secret key. See [here](https://pypi.org/project/python-decouple/#example-how-do-i-use-it-with-django) for more details
 
 ```python
 # first, install this into your virtual environment
@@ -49,9 +50,9 @@ from decouple import config
 SECRET_KEY = config("SECRET_KEY")
 ```
 
-- Open a .gitignore file and paste [this](https://www.toptal.com/developers/gitignore/api/django) (or [this](https://www.toptal.com/developers/gitignore/api/django,macos) for MacOs)into it
+- Open a .gitignore file and paste [this](https://www.toptal.com/developers/gitignore/api/django) (or [this](https://www.toptal.com/developers/gitignore/api/django,macos) for MacOs) into it
 - Add your app name as a string to your INSTALLED_APPS list in projectname/settings.py
-- After setting up your dependencies run these command:
+- After setting up your dependencies run these commands:
 
 ```python
 # to see the installed dependencies:
@@ -60,6 +61,6 @@ pip freeze
 # to save the dependencies (run this command everytime you install a new dependency to make it up-to-date with your dependencies):
 pip freeze > requirements.txt
 
-# to run on the current depencies.txt after, say, cloning a project from github
+# to run the dependencies for a project after, say, cloning a project from github
 pip install -r requirements.txt
 ```

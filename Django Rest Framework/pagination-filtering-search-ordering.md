@@ -100,7 +100,7 @@ REST_FRAMEWORK = {
 # see more here: https://www.django-rest-framework.org/api-guide/pagination/#limitoffsetpagination
 ```
 
-- Also, remove the 'pagination_class = SmallPageNumberPagination' line from your views.py because that was related to PageNumberPagination. Now you'll that you get all the 200 objects on one page. Well, not until you play around with the endpoint. For reference adding ? to your endpoint means a GET request. Thus, add `?limit=10` to your endpoint and you'll now be presented with 10 objects per page for 20 pages. This is just the limit part, which we were getting using the PageNumberPagination already. So, making use of the offset spec LimitOffsetPagination has, use the endpoint, say, `?limit=10&offset=11`. This will set 10 objects per page and ignore the first 11 objects, and will start from the 12th object. Therefore, we'll get:
+- Also, remove the 'pagination_class = SmallPageNumberPagination' line from your views.py because that was related to PageNumberPagination. Now you'll see that you get all the 200 objects on one page. Well, not until you play around with the endpoint. For reference, adding `?` to your endpoint means a GET request. Thus, add `?limit=10` to your endpoint and you'll now be presented with 10 objects per page for 20 pages in total. This is just the limit part, which we were getting using the PageNumberPagination already. So, making use of the offset spec LimitOffsetPagination has, use the endpoint, say, `?limit=10&offset=11`. This will set 10 objects per page and ignore the first 11 objects, and will start from the 12th object. Therefore, we'll get:
 
 ```python
 {

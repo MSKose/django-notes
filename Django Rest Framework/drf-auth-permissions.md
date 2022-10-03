@@ -99,12 +99,12 @@ class StudentList(generics.ListCreateAPIView):
 ![Screenshot 2022-10-02 at 12.01.15.png](./images/basicauth-img.png) -->
 
 <p align="center">
-  <img src="./images/base64-decoding-img.png" alt="drf_views_overview.png" height="300px"/>
   <img src="./images/basicauth-img.png" alt="drf_views_overview.png" height="300px"/>
+  <img src="./images/base64-decoding-img.png" alt="drf_views_overview.png" height="300px"/>
 </p>
 
 
-- Having seen how detrimental using BasicAuth might be, let's now see the more secure way to dealing with Authorization: **[TokenAuthentication](https://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication)**;
+- Having seen how detrimental using BasicAuth might be, let's now see the more secure way of dealing with Authorization: **[TokenAuthentication](https://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication)**;
 
 ```python
 # settings.py
@@ -113,11 +113,11 @@ INSTALLED_APPS = [
     'rest_framework.authtoken'
 ]
 
-# First things first, we'll need to 'rest_framework.authtoken' to our INSTALLED_APPS
+# First things first, we'll need to add 'rest_framework.authtoken' to our INSTALLED_APPS
 # Also you might need to apply migrations with python manage.py migrate after this
 ```
 
-- Also, change your REST_FRAMEWORK settings now to the following;
+- Also, change your REST_FRAMEWORK settings to be the following;
 
 ```python
 REST_FRAMEWORK = {
@@ -127,7 +127,7 @@ REST_FRAMEWORK = {
 }
 ```
 
-- Now that we have added TokenAuthentication, we'll see a new tab Tokens in our Admin panel from which we can generate tokens for users. For the sake of simplicity let's change our views permission to `IsAuthenticated`;
+- Now that we have added TokenAuthentication, we'll see a new tab Tokens in our Admin panel from which we can generate tokens for users. For the sake of simplicity let's change our views' permission to `IsAuthenticated`;
 
 ```python
 # views.py
@@ -139,7 +139,7 @@ class StudentList(generics.ListCreateAPIView):
 
 
 
-- Now head back to Postman and change the auth type in Tab in `Authorization` to "`No Auth`" (was previously "`Basic Auth`"). And add a new key-value pair in `Headers` tab. Set "`Authorization`" as key and "`Token <yourTokenHere>`" as value. You can get your token key from the Admin Panel by creating one for each user. After you have ticked the key-value pair row you have added, you'll be able to do GET request. And now go ahead and unselect that key-value pair and you'll get an "Authentication credentials were not provided.” error.
+- Now head back to Postman and change the auth type in Tab in `Authorization` to "`No Auth`" (which was previously "`Basic Auth`"). And add a new key-value pair in `Headers` tab. Set "`Authorization`" as key and "`Token <yourTokenHere>`" as value. You can get your token key from the Admin Panel by creating one for each user. After you have ticked the key-value pair row you have added, you'll be able to do GET request. And now go ahead and unselect that key-value pair and you'll get an "Authentication credentials were not provided.” error.
 <!-- ![Screenshot 2022-10-02 at 12.20.28 1.png](./images/adding-token-postman-img.png) -->
 
 <p align="center">
@@ -176,7 +176,8 @@ urlpatterns = [
     path('login/', obtain_auth_token, name="login"),
 ]
 
-# in a nutshell, obtain_auth_token expects a username and password (as we'll see it in practice below) and sends the token associated with that user
+# in a nutshell, obtain_auth_token expects a username and password (as we'll see it 
+# in practice below) and sends the token associated with that user as a result
 ```
 
 - Now let's head to Postman and untick the Authorization we have added previously. And in the Body tab select row and add your username and password in a JSON format and send a POST request to the endpoint user/login/
@@ -301,7 +302,7 @@ urlpatterns = [
 }
 
 # Only after we get to login page will we get the token. Hence, if we want to get token on registration
-# page too, we have to add some more lines into our views overriding the create method
+# page too, we have to add some more lines into our views, overriding the create method
 ```
 
 
@@ -356,7 +357,7 @@ class RegisterView(generics.CreateAPIView):
     "email": "test@test2.com",
     "first_name": "Test",
     "last_name": "User"
-		"token": "f96ea783030406332bb2aebe946ab37cac1c4914"
+    "token": "f96ea783030406332bb2aebe946ab37cac1c4914"
 }
 
 # It has worked! Now we get access to token after register POST request
@@ -391,7 +392,7 @@ class RegisterView(generics.CreateAPIView):
         token = Token.objects.get(user=user) # this is the only change. changed create to get
         data = serializer.data
         data['token'] = token.key
-				data['message'] = 'user was created successfully' # we can generate as much key-values as we want
+        data['message'] = 'user was created successfully' # we can generate as much key-values as we want
         headers = self.get_success_headers(serializer.data)
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 ```
@@ -404,8 +405,8 @@ class RegisterView(generics.CreateAPIView):
     "email": "test@test3.com",
     "first_name": "Test",
     "last_name": "User"
-		"token": "f96ea783030406wjkbfbb2aebe946ab37cac1c4914"
-		"message": "user was created successfully"
+    "token": "f96ea783030406wjkbfbb2aebe946ab37cac1c4914"
+    "message": "user was created successfully"
 }
 
 # see, we're still getting our token after registration
@@ -431,7 +432,7 @@ from django.urls import path
 from .views import logout_view
 
 urlpatterns = [
-		...
+    ...
     path('logout/', logout_view, name="logout"),
 ]
 ```
@@ -474,7 +475,7 @@ class StudentList(generics.ListCreateAPIView):
 
 ```python
 {
-		"detail": "You do not have permission to perform this action"
+    "detail": "You do not have permission to perform this action"
 }
 
 # all in all, overriding the IsAdminUser permission and creating a new custom permission class on view level
