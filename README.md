@@ -21,6 +21,7 @@ This repo includes my notes on Django
 .──── django-notes (repo)
 │
 ├── Django Fundamentals
+│   ├── django-settings-starter
 │   └── django-starter.md
 │
 ├── Django Rest Framework

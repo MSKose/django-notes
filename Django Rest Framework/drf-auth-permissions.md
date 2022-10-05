@@ -127,7 +127,7 @@ REST_FRAMEWORK = {
 }
 ```
 
-- Now that we have added TokenAuthentication, we'll see a new tab Tokens in our Admin panel from which we can generate tokens for users. For the sake of simplicity let's change our views' permission to `IsAuthenticated`;
+- Now that we have added TokenAuthentication, we'll see a new tab `Tokens` in our Admin panel from which we can generate tokens for users. For the sake of simplicity, let's change our views' permission to `IsAuthenticated`;
 
 ```python
 # views.py
@@ -199,7 +199,7 @@ urlpatterns = [
 ```
 
 - The token we received is the same token we have used previously, which we were able to get from Admin Panel. The only difference is now we can receive the token from Front-End too. And now try to send GET and POST requests in the endpoint api/student/ after adding the token to Headers, you'll be able to successfully send GET and POST requests. Therefore, what a Front-End does in this process is they add the token to Headers in their, say, axios method and be able to have the user logged in as long as the token in not missing in their request JSON.
-- This was a login process only, if want to register the user from the front-end we probably will need a different endpoint. Since registration requires validation check we need to add a serializer;
+- This was the login process only, if we wanted to register the user from the front-end, we probably will need a different endpoint. Since registration requires a validation check, we need to add a serializer;
 
 ```python
 # serializers.py
@@ -209,14 +209,27 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    # since email field is not by default added we are creating one
+    # since email field set to blank=True and doesn't validate for uniqueness in source code (User/AbstractUser Model) we're defining it again.
+    # for UniqueValidator see: https://www.django-rest-framework.org/api-guide/validators/#uniquevalidator
     email = serializers.EmailField(
             required=True,
-            validators=[UniqueValidator(queryset=User.objects.all())]
+            validators=[UniqueValidator(queryset=User.objects.all())] # therefore, this makes sure our emails are unique
             )
 
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password]) # validators validates the password for the required standarts
-    password2 = serializers.CharField(write_only=True, required=True)
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        validators=[validate_password], # validators validates the password for the required standarts
+        style={"input_type": "password"} # this one is not required but adding this will have this field appear as 'passwrod' on browser api 
+
+    )
+
+    password2 = serializers.CharField(
+        write_only=True,
+        required=True,
+        validators=[validate_password],
+        style={"input_type": "password"}
+    )
 
     class Meta:
         model = User
@@ -226,13 +239,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'last_name': {'required': True}
         }
 
-    def validate(self, attrs): # validating if password and password2 matches 
+    def validate(self, attrs): # validating if password and password2 match
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
 
         return attrs
 
-    def create(self, validated_data): # we are creating a user but we are not sending the password here since password is hashed
+    def create(self, validated_data): # we are creating a user but we do not want to include password as is; hence, we do not include it in user
         user = User.objects.create(
             username=validated_data['username'],
             email=validated_data['email'],
@@ -241,10 +254,19 @@ class RegistrationSerializer(serializers.ModelSerializer):
         )
 
         
-        user.set_password(validated_data['password']) # we are creating the password this way since it's hashed
+        user.set_password(validated_data['password']) # therefore, we are creating the password with set_password() to send the hashed form and not the string form
         user.save()
 
         return user
+
+    #! Second way of defining the create() method (it does the same thing):
+    # def create(self, validated_data):
+    #    password = validated_data.pop("password")
+    #    validated_data.pop('password2')
+    #    user = User.objects.create(**validated_data)
+    #    user.set_password(password)
+    #    user.save()
+    #    return user
 
 # now this serializer might look wordy, but it is what it is. Besides, you'll probably just copy 
 # and paste this serializer whenever you need a registration serializer
@@ -306,7 +328,7 @@ urlpatterns = [
 ```
 
 
-- Before moving on with overriding our views, do remember that our user still can have access to their token by logging in after having registered. But, since we want to have access to our token even immediately after registration we are overriding the views.py. So here our new views.py goes;
+- Before moving on with overriding our views, do remember that our user still can have access to their token by logging in after having registered. However, since we want to have access to our token even immediately after registration we are overriding the views.py. So here goes our new views.py;
 
 ```python
 # views.py
@@ -336,7 +358,7 @@ class RegisterView(generics.CreateAPIView):
 # However, there has been some modifications with the create function in order to send the token too
 ```
 
-- Let's test if the added create method in ou views have made a difference when we register a new user. Again, we are using Postman's Body/raw part to do a POST request but remember that this is no different than registering a user in our front-end. Anyways, after sending a POST request with the following JSON;
+- Let's test if the added create method in our views have made a difference when we register a new user. Again, we are using Postman's Body/raw part to do a POST request but remember that this is no different than registering a user in our front-end. Anyways, after sending a POST request with the following JSON;
 
 ```python
 {
@@ -349,7 +371,7 @@ class RegisterView(generics.CreateAPIView):
 }
 ```
 
-- We now get this;
+- We *now* get this;
 
 ```python
 {
@@ -360,26 +382,27 @@ class RegisterView(generics.CreateAPIView):
     "token": "f96ea783030406332bb2aebe946ab37cac1c4914"
 }
 
-# It has worked! Now we get access to token after register POST request
+# It has worked! Now we get access to the token after register POST request
 ```
-
 - Alternatively, we can add a signal watching a user to be created and if created, adding a token to the user;
 
 ```python
-# models.py
-from django.conf import settings
+# signals.py
+from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+@receiver(post_save, sender=User)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
 
-# since we created our token in our models, we no longer have to 
+# since we created our token in our signals, we no longer have to 
 # 'create' it on our views, we just have to 'get' it like;
+```
 
+```python
 # views.py
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -392,12 +415,28 @@ class RegisterView(generics.CreateAPIView):
         token = Token.objects.get(user=user) # this is the only change. changed create to get
         data = serializer.data
         data['token'] = token.key
-        data['message'] = 'user was created successfully' # we can generate as much key-values as we want
+        data['message'] = 'user was created successfully' # we can generate as much key-values as we want. we'll now see the message in the response JSON too
         headers = self.get_success_headers(serializer.data)
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 ```
 
-- After generating our token with post_save signals and getting it in our create method in our views, we'll still get our token after registration (well, with the addition of a message);
+- Finally, you might wanna add your signals import to your apps.py since that's what Django [recommends](https://docs.djangoproject.com/en/4.1/topics/signals/) doing;
+
+```python
+# apps.py
+from django.apps import AppConfig
+
+class UsersConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'users'
+
+    def ready(self):
+        import users.signals
+
+# assume that our app name is users 
+```
+
+- After generating our token with post_save signals and getting it in our create method in our views, we'll still get our token after registration;
 
 ```python
 {
@@ -412,7 +451,60 @@ class RegisterView(generics.CreateAPIView):
 # see, we're still getting our token after registration
 ```
 
-- Now let's add a logout view, where our token will be deleted;
+- It's all good with our Front-End having access to the user token after registration. Next, let's look into our default return JSON of our login requests;
+
+```python
+{
+    "token": "2e49a6aab4bawjhef3y2876238795b12476e17b895"
+}
+```
+
+- Therefore, only token is being sent by the default `obtain_auth_token` url settings. Hence, we have to inherit `[ObtainAuthToken](https://github.com/encode/django-rest-framework/blob/master/rest_framework/authtoken/views.py)` and override its post method and use that view in our views instead. Like so;
+
+```python
+# views.py 
+from rest_framework.authtoken.views import ObtainAuthToken
+
+class LoginView(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key, 'username': user.username})
+
+# in the response part, it was originally returning the token only, we have
+# added username too so as to have access to username after login.
+```
+
+- Let's add the new view to our urls.py;
+
+```python
+# views.py
+from .views import LoginView
+
+urlpatterns = [
+    # path('login/', obtain_auth_token, name="login"), # we have to comment this since we overrode it and use the following instead;
+    path('login/', LoginView.as_view(), name="login"),
+]
+```
+
+- After logging in, now we will get the following JSON returned;
+
+```python
+{
+    "token": "2e49a6aab4bawjhef3y2876238795b12476e17b895",
+    "username": "Mustafa"
+}
+
+# remember, we were only getting the token returned, we now
+# have access to the username too. Front-end is happy!
+```
+
+- If you're using dj-rest-auth as your Authentication package, overriding the login return value is a bit different. See [here](dj-rest-auto to be added)
+
+- Finally let's add a logout view, where we want our token to be deleted;
 
 ```python
 # views.py
@@ -579,4 +671,4 @@ urlpatterns = [
 # But if the user token provided was an admin user, we'd be able to request PUT without errors
 ```
 
-- Before finishing off, it'll be wise to mention two other third-party Authentication methods: **[JSON Web Token Authentication](https://www.django-rest-framework.org/api-guide/authentication/#json-web-token-authentication)** (aka JWT) and **[django-rest-auth / dj-rest-auth](https://www.django-rest-framework.org/api-guide/authentication/#django-rest-auth-dj-rest-auth)**
+- Before finishing off, it'll be wise to mention two other third-party Authentication packages: **[JSON Web Token Authentication](https://www.django-rest-framework.org/api-guide/authentication/#json-web-token-authentication)** (aka JWT) and **[django-rest-auth / dj-rest-auth](https://www.django-rest-framework.org/api-guide/authentication/#django-rest-auth-dj-rest-auth)**. See [here](dj-rest-auto to be added) for my dj-rest-auto notes
