@@ -544,7 +544,7 @@ class IsAdminorReadOnly(permissions.IsAdminUser): # we are overriding the permis
         
         if request.method in permissions.SAFE_METHODS: # SAFE_METHODS are request methods that does not allow alteration, hence read-only
             return True
-        else: # else, for non-safe methods like UPDATE or DELETE, look if the user is admin
+        else: # else, for non-safe methods like POST, PUT or DELETE, look if the user is admin
             return bool(request.user.is_staff) # bool() in this case will return true if the user is admin and grant the user with extended permissions other than read-only
 
 # By default, IsAdminUser was letting us pass only if we were an admin, but overriding it with our custom
