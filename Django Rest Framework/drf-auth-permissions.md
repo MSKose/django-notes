@@ -502,7 +502,7 @@ urlpatterns = [
 # have access to the username too. Front-end is happy!
 ```
 
-- If you're using dj-rest-auth as your Authentication package, overriding the login return value is a bit different. See [here](dj-rest-auto to be added)
+- If you're using dj-rest-auth as your Authentication package, overriding the login return value is a bit different. See [here](../Third%20Party%20Apps/dj-rest-auth.md)
 
 - Finally let's add a logout view, where we want our token to be deleted;
 
@@ -671,4 +671,4 @@ urlpatterns = [
 # But if the user token provided was an admin user, we'd be able to request PUT without errors
 ```
 
-- Before finishing off, it'll be wise to mention two other third-party Authentication packages: **[JSON Web Token Authentication](https://www.django-rest-framework.org/api-guide/authentication/#json-web-token-authentication)** (aka JWT) and **[django-rest-auth / dj-rest-auth](https://www.django-rest-framework.org/api-guide/authentication/#django-rest-auth-dj-rest-auth)**. See [here](dj-rest-auto to be added) for my dj-rest-auto notes
+- Before finishing off, it'll be wise to mention two other third-party Authentication packages: **[JSON Web Token Authentication](https://www.django-rest-framework.org/api-guide/authentication/#json-web-token-authentication)** (aka JWT) and **[django-rest-auth / dj-rest-auth](https://www.django-rest-framework.org/api-guide/authentication/#django-rest-auth-dj-rest-auth)**. See [here](../Third%20Party%20Apps/dj-rest-auth.md)

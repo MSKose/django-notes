@@ -42,7 +42,7 @@ python manage.py migrate
 ```
 
 - dj-rest-auth comes with optional registration kinds like [allauth](https://dj-rest-auth.readthedocs.io/en/latest/installation.html#registration-optional). But if you'd like to write your own registration you can do that too
-- However, apart from registration, `dj-rest-auth` come with some default [endpoints](https://dj-rest-auth.readthedocs.io/en/latest/api_endpoints.html) like `/login/`, `/logout/` and `/reset/`
+- However, apart from registration, `dj-rest-auth` come with some default [endpoints](https://dj-rest-auth.readthedocs.io/en/latest/api_endpoints.html) like `/login/`, `/logout/` and `/reset/` as listed above
 - In the default rest-framework auth, logout didn't automatically delete our token. But with dj-rest-auth, it comes out of the box
 - Want hands-on experience with dj-rest-auth? Try their demo project with back-end and front-end [here](https://dj-rest-auth.readthedocs.io/en/latest/demo.html)
 
