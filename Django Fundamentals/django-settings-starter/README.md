@@ -1,7 +1,7 @@
 # settings.py configuration
 
 <aside>
-💡 NOTE: this Django repo is opinionated in that it comes with `drf_yasg` (a 3rd party swagger package) and `django-debug-toolbar` already installed and configured. Also, sqlite for dev and postgresql for prod settings was chosen. Therefore, after cloning this repository, keep those in mind and change the parts to your linking.
+💡 NOTE: this Django repo is opinionated in that it comes with "drf_yasg" (a 3rd party swagger package) and "django-debug-toolbar" already installed and configured. Also, sqlite for dev and postgresql for prod settings was chosen. Therefore, after cloning this repository, keep those in mind and change the parts to your linking.
 
 </aside>
 
@@ -228,7 +228,7 @@ elif env_name == "dev":
     from .dev import *
 ```
 
-- And finally we'll modify .env file with a environment name, postgres and debug variables;
+- And finally we'll modify .env file with an environment name, postgres and debug variables;
 
 ```python
 

@@ -594,7 +594,7 @@ class Student(models.Model):
 # As always, run makemigrations and migrate commands afterwards
 ```
 
-- For the views part we'll need to override the perform_create method(). Just as we had to override the create method to add the token, now we'll need to override the perform_create method from CreateModelMixin to set a creator for users;
+- For the views part, we'll need to override the perform_create method(). Just as we had to override the create method to add the token, now we'll need to override the perform_create method from CreateModelMixin to set a creator for users;
 
 ```python
 # views.py
@@ -605,7 +605,7 @@ class StudentList(generics.ListCreateAPIView):
     queryset = Student.objects.all()
     permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer): # see more about perform_create here: https://www.django-rest-framework.org/api-guide/generic-views/#methods
         serializer.save(user=self.request.user) # by default, the save method didn't take any arguments in CreateModelMixin but now we're sending the creator (the logged in user doing the POST) too
 ```
 
