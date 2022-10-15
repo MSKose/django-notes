@@ -265,7 +265,7 @@ urlpatterns = [
 # source code for router.
 ```
 
-- Talking about the ViewSet, we can also specify the `@action` decorator to "If you have ad-hoc methods that should be routable, you can mark them as such with the `@action` decorator." See the official [docs](https://www.django-rest-framework.org/api-guide/viewsets/#marking-extra-actions-for-routing) for more. For our last ViewSet StudentCRUD, let's define an action and how it could be utilised:
+- Talking about the ViewSet, we can also specify the `@action` decorator: "If you have ad-hoc methods that should be routable, you can mark them as such with the `@action` decorator." See the official [docs](https://www.django-rest-framework.org/api-guide/viewsets/#marking-extra-actions-for-routing) for more. For our last ViewSet StudentCRUD, let's define an `action` and see how it could be utilised:
 
 ```python
 # urls.py
@@ -276,13 +276,13 @@ class StudentCRUD(ModelViewSet):
     @action(detail=False, methods=['GET'])
     def student_count(self,request):
         count={
-            'student-count':self.queryset.count()
+            'student-count': self.queryset.count()
         }
         return Response(count)
 
 # the code must be self-explanatory but this will return the total number of students. Say our url is defined the way it is on the above code
 # snippet with the endpoint of "student". How we'd access the student_count function with that url is as follows: "student/student_count/"
 # some notes on the arguments action decorator takes: 
-# if not provided, methods defaults to GET. Meaning we could have left it empty and still get the same result on the endpoint
+# if not provided, methods defaults to GET. Meaning, we could have left it empty and still get the same result on the endpoint but
 # the detail argument is required. It determines whether this action applies to instance/detail requests or collection/list requests.
 ```

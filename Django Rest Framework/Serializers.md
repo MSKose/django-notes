@@ -17,9 +17,9 @@ class CommentSerializer(serializers.Serializer):
     email = serializers.EmailField()
     content = serializers.CharField(max_length=200)
     created = serializers.DateTimeField()
-		number = serializers.IntegerField(required=False) # we had to write required=False since this field was null=True on our models.py
+    number = serializers.IntegerField(required=False) # we had to write required=False since this field was null=True on our models.py
 
-		def create(self, validated_data):
+    def create(self, validated_data):
         return Student.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
@@ -149,7 +149,7 @@ class PathSerializer(serializers.ModelSerializer):
 
 class StudentSerializer(serializers.ModelSerializer):
     path = serializers.StringRelatedField()
-		path_id = serializers.IntegerField() # notice that this is an IntegerField
+    path_id = serializers.IntegerField() # notice that this is an IntegerField
 
     class Meta:
         model = Student

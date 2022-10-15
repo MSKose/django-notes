@@ -82,7 +82,7 @@ class UserSerializer(serializers.ModelSerializer): # adding a serializer to get 
             'email'
         )
 
-class CustomTokenSerializer(TokenSerializer): # we will be adding username and email thus the UserSerializer
+class CustomTokenSerializer(TokenSerializer): # we want to add username and email; thus, we're adding the UserSerializer
     user = UserSerializer(read_only=True)
 
     class Meta(TokenSerializer.Meta):
@@ -94,7 +94,7 @@ class CustomTokenSerializer(TokenSerializer): # we will be adding username and e
 # Therefore, we're overriding the TokenSerializer where our return value for login is defined originally
 # And on the Meta part we inheriting TokenSerializer.Meta since we do not want to define the Meta model 
 # again, but if we had left that out we could very well have imported the model in the source code and 
-# write the model again. Therfore, there's nothing fancy with the Meta inheritence
+# write the model again. Therefore, there's nothing fancy with the Meta inheritence
 ```
 
 - Adding these to our serializers won't be enough since the code will still look into the source code and read TokenSerializer - which only returns the token by default. The second step is defining where our Django code should be looking for our return value for our login POST requests. Therefore, we have to add the following to our settings (as is stated in the [docs](https://dj-rest-auth.readthedocs.io/en/latest/configuration.html));

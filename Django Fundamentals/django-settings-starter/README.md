@@ -1,9 +1,7 @@
 # settings.py configuration
 
-<aside>
-💡 NOTE: this Django repo is opinionated in that it comes with "drf_yasg" (a 3rd party swagger package) and "django-debug-toolbar" already installed and configured. Also, sqlite for dev and postgresql for prod settings was chosen. Therefore, after cloning this repository, keep those in mind and change the parts to your linking.
+💡 NOTE: this Django repo is opinionated in that it comes with `drf_yasg` (a 3rd party swagger package) and `django-debug-toolbar` already installed and configured. Also, sqlite for dev and postgresql for prod settings was chosen. Therefore, after cloning this repository, keep those in mind and change the parts to your linking.
 
-</aside>
 
 ```python
 # Clone this repository
@@ -19,13 +17,12 @@ $ git clone https://github.com/MSKose/django-notes
 
 # Add the following to your .env file
     SECRET_KEY=<yourSecretKeyHere>
-    DEBUG=True 
-    ENV_NAME=dev 
-    DEBUG=True 
+    DEBUG=True
+    ENV_NAME=dev
     SQL_DATABASE=<yourDatabaseProjectName>
-    SQL_USER=<yourDatabaseUsername> 
+    SQL_USER=<yourDatabaseUsername>
     SQL_PASSWORD=<yourDatabasePassword>
-    SQL_HOST=localhost 
+    SQL_HOST=localhost
     SQL_PORT=5432
 
 # Run the app
