@@ -2,10 +2,8 @@
 
 - Serializers in Django REST Framework are **responsible for converting objects into data types understandable by javascript and front-end frameworks**. Serializers also provide **deserialization**, allowing parsed data to be converted back into complex types, after first validating the incoming data.
 
-<aside>
 💡 There are two ways to go about utilising serializers in DRF. First, the more verbose way, is to use `serializers.Serializer` and the second, to use the `serializers.ModelSerializer`. You might have noticed, this was the case with defining Forms too. Well, yes, serializers do resemble forms.
 
-</aside>
 
 - Let’s start with the first method. Remember, declaring a serializer looks very similar to declaring a form:
 

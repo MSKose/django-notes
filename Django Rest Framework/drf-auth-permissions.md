@@ -183,7 +183,7 @@ urlpatterns = [
 - Now let's head to Postman and untick the Authorization we have added previously. And in the Body tab select row and add your username and password in a JSON format and send a POST request to the endpoint user/login/
 
 ```python
-# therefore POSTing this;
+# therefore, POSTing this;
 {
     "username": "Mustafa", # your username and password should match
     "password": "pass321"
@@ -195,7 +195,7 @@ urlpatterns = [
 }
 
 # In Front-End terms what we did here is simply trying to log in with a username and password. And upon entering
-# a valid username and password we recieved the token we will be using to validate that the user
+# a valid username and password, we recieved the token we will be using to validate that the user
 ```
 
 - The token we received is the same token we have used previously, which we were able to get from Admin Panel. The only difference is now we can receive the token from Front-End too. And now try to send GET and POST requests in the endpoint api/student/ after adding the token to Headers, you'll be able to successfully send GET and POST requests. Therefore, what a Front-End does in this process is they add the token to Headers in their, say, axios method and be able to have the user logged in as long as the token in not missing in their request JSON.
