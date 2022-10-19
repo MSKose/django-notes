@@ -275,7 +275,7 @@ class StudentCRUD(ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def student_count(self,request):
-        count={
+        count = {
             'student-count': self.queryset.count()
         }
         return Response(count)

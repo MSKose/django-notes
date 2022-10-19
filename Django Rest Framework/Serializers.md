@@ -5,7 +5,7 @@
 💡 There are two ways to go about utilising serializers in DRF. First, the more verbose way, is to use `serializers.Serializer` and the second, to use the `serializers.ModelSerializer`. You might have noticed, this was the case with defining Forms too. Well, yes, serializers do resemble forms.
 
 
-- Let’s start with the first method. Remember, declaring a serializer looks very similar to declaring a form:
+- Let’s start with the first method. Remember, defining a serializer looks very similar to defining a form:
 
 ```python
 # serializers.py
