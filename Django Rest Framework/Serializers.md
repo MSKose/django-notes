@@ -32,7 +32,7 @@ class CommentSerializer(serializers.Serializer):
 # current one. Same goes for last_name and number
 ```
 
-- The second method to declare serializer is a lot less verbose. Thus easy to read:
+- The second method to declare serializer is a lot less verbose. Thus, easy to read:
 
 ```python
 # serializers.py
@@ -183,7 +183,7 @@ class PathSerializer(serializers.ModelSerializer):
         fields = ["id", "path_name", 'students']
 
 # here, in PathSerializer "students" comes from related_name='students' on our model Student's path attribute. Had we given a different name 
-# there, we would have used that name here. Therefore related_name is exteremely important for these kinds of things. To see the related_name 
+# there, we would have used that name here. Therefore, related_name is exteremely important for these kinds of things. To see the related_name 
 # see above codes where we had created our Model
 ```
 
