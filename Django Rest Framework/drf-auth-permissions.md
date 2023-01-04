@@ -75,7 +75,7 @@ class StudentList(generics.ListCreateAPIView):
 
 ```python
 # views.py
-from rest_framework.permissions import IsAdmIsAuthenticatedOrReadOnlyinUser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 class StudentList(generics.ListCreateAPIView):
     serializer_class = StudentSerializer
