@@ -43,7 +43,7 @@ $ git clone https://github.com/MSKose/django-notes
 ### Second Solution: Separate settings file for each environment
 
 - This is an extension of the previous approach. It allows you to keep all configurations in VCS and to share default settings between developers.
-- In this case, you make a settings package with the following file structure in your project directory:
+- In this case, you create a settings package with the following file structure in your project directory:
 
 ```python
 .── settings (folder)
@@ -85,8 +85,8 @@ INSTALLED_APPS = [
 
     # Third party apps:
     'rest_framework',
-	...
-	# 'debug_toolbar', # I'll be adding the third party apps that I will only be using on development to dev.py, like debug_toolbar. See dev.py below
+    ...
+    # 'debug_toolbar', # We'll be adding the third party apps that I will only be using on development to dev.py, like debug_toolbar. See dev.py below
 
     # myapps
     'my_first_app',
@@ -94,7 +94,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware', # I'll be adding the third party apps I will only be using on development to dev.py, like debug_toolbar. See dev.py below
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware', # We'll be adding the third party apps that I will only be using on development to dev.py, like debug_toolbar. See dev.py below
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
