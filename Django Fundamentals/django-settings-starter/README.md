@@ -85,8 +85,8 @@ INSTALLED_APPS = [
 
     # Third party apps:
     'rest_framework',
-		...
-		# 'debug_toolbar', # I'll be adding the third party apps I will only be using on development to dev.py, like debug_toolbar. See dev.py below
+	...
+	# 'debug_toolbar', # I'll be adding the third party apps that I will only be using on development to dev.py, like debug_toolbar. See dev.py below
 
     # myapps
     'my_first_app',
