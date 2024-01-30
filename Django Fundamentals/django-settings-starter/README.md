@@ -231,7 +231,7 @@ elif env_name == "dev":
 
 SECRET_KEY=<yourSecretKeyHere>
 
-DEBUG=True # switch to True when in production
+DEBUG=True # switch to False when in production
 ENV_NAME=dev # switch to prod when in production
 SQL_DATABASE=<yourDatabaseName> 
 SQL_USER=postgres 
