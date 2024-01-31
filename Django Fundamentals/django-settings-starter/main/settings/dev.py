@@ -7,7 +7,7 @@ INSTALLED_APPS += THIRD_PARTY_APPS
 THIRD_PARTY_MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 MIDDLEWARE += THIRD_PARTY_MIDDLEWARE
 
-# using sqlite for production
+# using sqlite for development
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
